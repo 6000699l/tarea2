@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        function byId(id) {
+            return document.getElementById(id).value;
+        }
+        
+        function convertiranum(arreglo, lim) {
+            var arrs = arreglo.split(lim);
+            arrn =[];
+            arrs.forEach((elem) => {
+                arrn.push(Number(elem))
+            });
+            return arrn;
+        }
+        
+        function tomarMatriz(id) {
+            var matrizStr = byId(id);
+            var columnas = matrizStr.split("\n");
+            var matriz = [];
+            for (var i = 0; i < 3; i++) {
+                matriz.push(convertiranum(columnas[i], ","));
+            }
+            return matriz;
+        }
+        
+        function mostrarMatriz(matriz, resultadoId) {
+            var resultadoStr = "";
+            for (var i = 0; i < 3; i++) {
+                resultadoStr += matriz[i].map(function(num) {
+                    return num.toFixed(0);
+                }).join(", ") + "\n";
+            }
+            document.getElementById(resultadoId).value = resultadoStr;
+        }
+        
+        function traslacion() {
+            var matrizOriginal = tomarMatriz("vo");
+            var matrizTraslacion = tomarMatriz("vt");
+            var resultado = sumaMatrices(matrizOriginal, matrizTraslacion);
+            mostrarMatriz(resultado, "vr");
+        }
+        
+        function escalar() {
+            var matrizOriginal = tomarMatriz("voe");
+            var escala = parseFloat(byId("e"));
+            var resultado = multiplicarMatriz(matrizOriginal, escala);
+            mostrarMatriz(resultado, "vre");
+        }
+        
+        function rotar() {
+            var matrizOriginal = tomarMatriz("vor");
+            var angulo = parseFloat(byId("angulo"));
+            var radianes = angulo * (Math.PI / 180);
+            var matrizRotacion = [
+                [Math.cos(radianes), -Math.sin(radianes), 0],
+                [Math.sin(radianes), Math.cos(radianes), 0],
+                [0, 0, 1]
+            ];
+            var resultado = multiplicarMatrizMatriz(matrizRotacion, matrizOriginal);
+            mostrarMatriz(resultado, "vrotado");
+        }
+        
+        function sumaMatrices(matriz1, matriz2) {
+            var resultado = [];
+            for (var i = 0; i < 3; i++) {
+                resultado.push(matriz1[i].map(function(num, idx) {
+                    return num + matriz2[i][idx];
+                }));
+            }
+            return resultado;
+        }
+        
+        function multiplicarMatriz(matriz, escala) {
+            var resultado = [];
+            for (var i = 0; i < 3; i++) {
+                resultado.push(matriz[i].map(function(num) {
+                    return num * escala;
+                }));
+            }
+            return resultado;
+        }
+        
+        function multiplicarMatrizMatriz(matriz1, matriz2) {
+            var resultado = [];
+            for (var i = 0; i < 3; i++) {
+                resultado.push([]);
+                for (var j = 0; j < 3; j++) {
+                    var sum = 0;
+                    for (var k = 0; k < 3; k++) {
+                        sum += matriz1[i][k] * matriz2[k][j];
+                    }
+                    resultado[i].push(sum);
+                }
+            }
+            return resultado;
+        }
+    </script>
+</head>
+<body>
+    <h1>
+        <center> TAREA 2 - TRASLACION, ESCALA Y ROTACION DE MATRICES </center>
+    </h1>
+    <h1> Traslación </h1>
+    <p>Matriz Original (columnas separadas por saltos de línea):
+        <textarea id="vo" rows="3" size="20"></textarea>
+    </p>
+    <p>Matriz Traslación (columnas separadas por saltos de línea):
+        <textarea id="vt" rows="3" size="20"></textarea>
+    </p>
+    <p>Matriz Trasladada:
+        <textarea id="vr" rows="3" size="20" readonly></textarea>
+    </p>
+    <button id="btn_tr" onclick="traslacion()">Realizar traslación</button>
+    <h1> Escalar </h1>
+    <p>Matriz Original (columnas separadas por saltos de línea):
+        <textarea id="voe" rows="3" size="20"></textarea>
+    </p>
+    <p>Escala Del 1 al 100:
+        <input id="e" size="10">
+    </p>
+    <p>Matriz Escalada:
+        <textarea id="vre" rows="3" size="20" readonly></textarea>
+    </p>
+    <button id="btn_esc" onclick="escalar()">Realizar escalado</button>
+    <h1> Rotación </h1>
+    <p>Matriz Original (columnas separadas por saltos de línea):
+        <textarea id="vor" rows="3" size="20"></textarea>
+    </p>
+    <p>Ángulo de rotación:
+        <input id="angulo" size="10">
+    </p>
+    <p>Matriz Rotada:
+        <textarea id="vrotado" rows="3" size="20" readonly></textarea>
+    </p>
+    <button id="btn_rot" onclick="rotar()">Realizar rotación</button>
+</body>
+</html>
